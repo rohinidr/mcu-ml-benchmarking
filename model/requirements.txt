@@ -1,0 +1,9 @@
+tensorflow>=2.13
+numpy
+pandas
+matplotlib
+scikit-learn
+pillow
+tqdm
+flatbuffers
+jupyterlab

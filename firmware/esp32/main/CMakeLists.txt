@@ -1,0 +1,12 @@
+idf_component_register(
+    SRCS
+        "main.c"
+        "model_runner.c"
+    INCLUDE_DIRS
+        "."
+        "../../common"
+        "${CMAKE_SOURCE_DIR}/components/esp-tflite-micro"
+    REQUIRES
+        esp-tflite-micro
+        esp_timer
+)

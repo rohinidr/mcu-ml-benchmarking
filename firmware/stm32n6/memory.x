@@ -1,0 +1,6 @@
+/* STM32N657 — NS SRAM execution via probe-rs */
+MEMORY
+{
+    FLASH : ORIGIN = 0x34180400, LENGTH = 256K
+    RAM   : ORIGIN = 0x341C0400, LENGTH = 512K
+}

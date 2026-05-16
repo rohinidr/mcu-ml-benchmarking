@@ -1,0 +1,40 @@
+{
+  "name": "MCU ML Benchmark",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "workspaceFolder": "/workspaces/mcu-ml-benchmark",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/rust:1": {},
+    "ghcr.io/devcontainers/features/node:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-vscode.cmake-tools",
+        "marus25.cortex-debug",
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "espressif.esp-idf-extension",
+        "ms-vscode.makefile-tools",
+        "rust-lang.rust-analyzer"
+      ],
+      "settings": {
+        "cmake.configureOnOpen": false,
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      }
+    }
+  },
+  "postCreateCommand": "bash /workspaces/mcu-ml-benchmark/.devcontainer/setup.sh",
+  "mounts": [
+    "source=/home/rohini/STMicroelectronics/STM32Cube/STM32CubeProgrammer,target=/home/vscode/STMicroelectronics/STM32Cube/STM32CubeProgrammer,type=bind,consistency=cached",
+    "source=/home/rohini/st/stm32cubeide_2.1.0/plugins/com.st.stm32cube.ide.mcu.externaltools.cubeprogrammer.linux64_2.2.400.202601091506/tools/bin,target=/home/vscode/stm32-signing/bin,type=bind,consistency=cached"
+  ],
+  "runArgs": [
+    "--privileged",
+    "-v", "/dev/bus/usb:/dev/bus/usb"
+  ],
+  "remoteUser": "vscode"
+}
