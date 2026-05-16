@@ -1,0 +1,11 @@
+{
+  "sample_rate": 16000,
+  "n_mfcc": 10,
+  "n_fft": 512,
+  "hop_length": 320,
+  "win_length": 400,
+  "n_mels": 40,
+  "n_frames": 49,
+  "n_classes": 35,
+  "_note_hop": "hop_length=320 (20ms stride) produces exactly 49 frames for a 1s clip at 16kHz"
+}
