@@ -172,16 +172,34 @@ It also prints the quantization parameters — copy them into each `model_config
 
 ### STM32N6570-DK
 
-**Prerequisites:** Download your model from [ST Edge AI Developer Cloud](https://stedgeai-dc.st.com), select target **STM32N657**, and copy the generated `Middlewares/ST/AI/` folder into `firmware/stm32n6/`.
+**Boot sequence:** ROM bootloader → FSBL (in XSPI @ `0x70000000`) → copies app to AXISRAM → runs classifier.
 
+**Prerequisites:**
+
+1. Generate C code from [ST Edge AI Developer Cloud](https://stedgeai-dc.st.com) (target: STM32N657) and copy the generated `Middlewares/ST/AI/` folder into `firmware/stm32n6/`.
+
+2. Download the prebuilt FSBL from the [STM32N6-GettingStarted-ObjectDetection](https://github.com/STMicroelectronics/STM32N6-GettingStarted-ObjectDetection) repo and place it in `firmware/stm32n6/`:
+   ```
+   firmware/stm32n6/ai_fsbl_cut_2_0.stm32
+   ```
+
+**Build:**
 ```bash
 cd firmware/stm32n6
 cmake -B build -G Ninja
 ninja -C build
-probe-rs run --chip STM32N657 build/classifier.elf
 ```
 
-Results appear on the probe-rs console (RTT/semihosting).
+**Flash** (signs app + flashes FSBL and classifier to XSPI NOR via STM32CubeProgrammer):
+```bash
+bash flash.sh build/classifier.elf
+```
+
+This flashes:
+- FSBL → XSPI @ `0x70000000`
+- Classifier (signed) → XSPI @ `0x70040000`
+
+On reset the FSBL copies the classifier to AXISRAM at `0x34010000` and jumps to it. Results print via UART/RTT.
 
 ### ESP32-S3
 
