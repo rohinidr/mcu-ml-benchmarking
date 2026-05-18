@@ -10,6 +10,8 @@ Benchmarking classification model inference across three microcontrollers for re
 
 Metrics collected per board: **inference time (µs)**, **accuracy**, **min/max latency**.
 
+> **Note:** STM32N6570-DK results use the **Cortex-M55 CPU**, not the Neural-ART NPU. See [Known Limitations](#known-limitations).
+
 ---
 
 ## Table of Contents
@@ -25,6 +27,7 @@ Metrics collected per board: **inference time (µs)**, **accuracy**, **min/max l
   - [Arduino Nano 33 BLE Sense](#arduino-nano-33-ble-sense)
 - [Collecting Results](#collecting-results)
 - [Common Interface](#common-interface)
+- [Known Limitations](#known-limitations)
 
 ---
 
@@ -262,6 +265,29 @@ uint32_t model_inference_time_us(void);
 ```
 
 To port to a fourth platform: implement these three functions and provide a `model_config.h` — no other changes needed.
+
+---
+
+## Known Limitations
+
+### STM32N6570-DK — Neural-ART NPU Not Used
+
+The STM32N657 includes a Neural-ART NPU hardware accelerator. However, **DS-CNN-M is not compatible with the NPU** and runs on the Cortex-M55 CPU instead. The NPU rejected the model for the following reasons:
+
+| Requirement | DS-CNN-M | Status |
+|-------------|----------|--------|
+| Standard Conv2D operators | Uses Depthwise Separable Conv | Not supported by NPU |
+| Per-tensor int8 quantization | Uses per-channel quantization | NPU requires per-tensor |
+| 2D spatial input (e.g. 224×224) | MFCC input is 49×10 (audio) | Suboptimal NPU mapping |
+| Fused BN + activation layers | Separate layers in architecture | NPU requires fused ops |
+
+The Neural-ART NPU is optimized for image classification CNNs (MobileNetV1/V2, ResNet variants) with standard spatial convolutions. Audio models with 1D-like MFCC inputs and depthwise separable convolutions do not map onto the NPU dataflow.
+
+**Impact on benchmark:** STM32N6 results reflect Cortex-M55 CPU performance at 800 MHz, not NPU-accelerated inference. This is a valid and intentional comparison — it isolates the effect of CPU microarchitecture (M55 vs LX7 vs M4F) independent of dedicated hardware accelerators.
+
+**Format note:** Both TFLite and ONNX formats were tested with ST Edge AI Developer Cloud. The NPU rejection is based on model architecture, not file format — the tool produces the same result for both.
+
+**Future work:** Evaluating an NPU-compatible model (e.g. MobileNet-based KWS) on the Neural-ART accelerator would complement these results.
 
 ---
 
